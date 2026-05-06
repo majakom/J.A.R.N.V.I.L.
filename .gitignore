@@ -17,3 +17,7 @@ venv.bak/
 .vscode/
 # Temporary file for partial code execution
 tempCodeRunnerFile.py
+
+# Database
+*.db
+*.sqlite3
