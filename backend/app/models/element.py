@@ -1,5 +1,7 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.orm import relationship
 from db.base import Base
+from models.step import step_parts
 
 class Element(Base):
     __tablename__ = "elements"
@@ -9,3 +11,9 @@ class Element(Base):
     amount = Column(Integer)
     url = Column(String, nullable=True)
     comment = Column(String, nullable=True)
+
+    steps = relationship(
+        "Step",
+        secondary=step_parts,
+        back_populates="parts"
+    )

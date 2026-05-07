@@ -5,7 +5,7 @@ from pydantic import BaseModel
 class StepBase(BaseModel):
     instruction_id: int
     step_number: int
-    part_id: int
+    part_ids: list[int]
     description: str
 
 class StepCreate(StepBase):
@@ -14,7 +14,7 @@ class StepCreate(StepBase):
 class StepUpdate(BaseModel):
     instruction_id: Optional[int] = None
     step_number: Optional[int] = None
-    part_id: Optional[int] = None
+    part_ids: Optional[list[int]] = None
     description: Optional[str] = None
 
 class StepRead(StepBase):
