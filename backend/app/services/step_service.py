@@ -1,3 +1,4 @@
+from schemas.ai_instruction import GeneratedStep
 from schemas.step import StepCreate, StepUpdate
 from repositories.step_repository import StepRepository
 
@@ -30,3 +31,13 @@ class StepService:
     async def delete(self, step_id: int):
         step = await self.get(step_id)
         await self.repo.delete(step)
+
+    async def create_steps_for_generated_instruction(self, instruction_id: int, steps_data: list[GeneratedStep]):
+        for step_data in steps_data:
+            step_create = StepCreate(
+                instruction_id=instruction_id,
+                step_number=step_data.step_number,
+                description=step_data.description,
+                part_ids=step_data.part_ids
+            )
+            await self.repo.create(step_create)

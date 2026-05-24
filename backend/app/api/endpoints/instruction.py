@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi_utils.cbv import cbv
+from schemas.ai_instruction import GeneratedInstruction
 from schemas.instruction import InstructionCreate, InstructionUpdate, InstructionRead
 from schemas.step import StepCreate, StepUpdate, StepRead
 from services.instruction_service import InstructionService
@@ -119,3 +120,9 @@ class InstructionEndpoints:
             raise HTTPException(404, "Previous step not found")
         await self.instruction_service.set_current_step(instruction_id, previous_step.id)
         return previous_step
+    
+    @router.post("/create_with_generated_instruction", response_model=InstructionRead)
+    async def create_instruction_with_generated_instruction(self, data: GeneratedInstruction):
+        instruction = await self.instruction_service.create_with_generated_instruction(data)
+        await self.step_service.create_steps_for_generated_instruction(instruction.id, data.steps)
+        return instruction

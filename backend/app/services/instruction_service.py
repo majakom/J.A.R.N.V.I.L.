@@ -1,3 +1,4 @@
+from schemas.ai_instruction import GeneratedInstruction
 from schemas.instruction import InstructionCreate, InstructionUpdate
 from repositories.instruction_repository import InstructionRepository
 
@@ -29,3 +30,7 @@ class InstructionService:
         instruction = await self.get(instruction_id)
         instruction.current_step_id = step_id
         await self.repo.update(instruction, InstructionUpdate(current_step_id=step_id))
+
+    async def create_with_generated_instruction(self, data: GeneratedInstruction):
+        instruction_create = InstructionCreate(name=data.name)
+        return await self.repo.create(instruction_create)
