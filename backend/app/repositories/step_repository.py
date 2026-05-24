@@ -1,5 +1,6 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from models.instruction import Instruction
 from models.element import Element
 from models.step import Step
 from sqlalchemy.orm import selectinload
@@ -46,6 +47,19 @@ class StepRepository:
 
         self.db.add(step)
 
+        await self.db.flush()
+
+        # Get instruction
+        instruction_result = await self.db.execute(
+            select(Instruction).where(
+                Instruction.id == step.instruction_id
+            )
+        )
+
+        instruction = instruction_result.scalar_one_or_none()
+        if instruction.current_step_id is None:
+            instruction.current_step_id = step.id
+            
         await self.db.commit()
         return await self.get_by_id(step.id)
 
