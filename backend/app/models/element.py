@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import JSON, Column, Integer, String
 from sqlalchemy.orm import relationship
 from db.base import Base
 from models.step import step_parts
@@ -11,6 +11,7 @@ class Element(Base):
     amount = Column(Integer)
     url = Column(String, nullable=True)
     comment = Column(String, nullable=True)
+    embedding = Column(JSON, nullable=True)
 
     steps = relationship(
         "Step",

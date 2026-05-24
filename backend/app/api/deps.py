@@ -3,6 +3,7 @@ from db.session import AsyncSessionLocal
 from sqlalchemy.ext.asyncio import AsyncSession
 from repositories.element_repository import ElementRepository
 from services.element_service import ElementService
+from services.instruction_generation_service import InstructionGeneratorService
 from repositories.instruction_repository import InstructionRepository
 from services.instruction_service import InstructionService
 from repositories.step_repository import StepRepository
@@ -33,3 +34,9 @@ def get_step_service(
 ) -> StepService:
     repo = StepRepository(db)
     return StepService(repo)
+
+def get_instruction_generator_service(
+    db: AsyncSession = Depends(get_db),
+) -> InstructionGeneratorService:
+    repo = ElementRepository(db)
+    return InstructionGeneratorService(repo)
