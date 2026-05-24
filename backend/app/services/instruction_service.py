@@ -24,3 +24,8 @@ class InstructionService:
     async def delete(self, instruction_id: int):
         instruction = await self.get(instruction_id)
         await self.repo.delete(instruction)
+
+    async def set_current_step(self, instruction_id: int, step_id: int):
+        instruction = await self.get(instruction_id)
+        instruction.current_step_id = step_id
+        await self.repo.update(instruction, InstructionUpdate(current_step_id=step_id))
