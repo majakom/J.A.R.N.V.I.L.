@@ -1,4 +1,5 @@
 from fastapi import Depends
+from repositories.yolo_class_repository import YoloClassRepository
 from db.session import AsyncSessionLocal
 from sqlalchemy.ext.asyncio import AsyncSession
 from repositories.element_repository import ElementRepository
@@ -19,7 +20,8 @@ def get_element_service(
     db: AsyncSession = Depends(get_db)
 ) -> ElementService:
     repo = ElementRepository(db)
-    return ElementService(repo)
+    yolo_class_repo = YoloClassRepository(db)
+    return ElementService(repo, yolo_class_repo)
 
 
 def get_instruction_service(
