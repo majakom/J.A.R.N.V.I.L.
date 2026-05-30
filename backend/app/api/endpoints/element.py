@@ -39,3 +39,15 @@ class ElementEndpoints:
             return {"message": "deleted"}
         except ValueError:
             raise HTTPException(404, "Not found")
+        
+    @router.post("/{element_id}/show")
+    async def show_element(self, element_id: int, data: dict[str, bool]):
+        try:
+            show = data.get("show", True)
+            print(f"Show element {element_id}: {show}")
+            result = await self.service.show(element_id, show)
+            if result is None:
+                return {"message": f"Element {element_id} has no good match to show"}
+            return {"message": f"Showing element {element_id} as {result}"}
+        except ValueError:
+            raise HTTPException(404, "Not found")
