@@ -33,6 +33,12 @@ export default function InstructionsPanel() {
     comment: "",
   });
 
+  //SEARCH ITEMS
+  const [searchTerm, setSearchTerm] = useState("");
+
+  const filteredElements = elements.filter((el) =>
+    el.name?.toLowerCase().includes(searchTerm.toLowerCase())
+  );
   // LOAD
   const fetchElements = async () => {
     try {
@@ -207,6 +213,29 @@ export default function InstructionsPanel() {
           )}
         </div>
 
+        {/* SEARCH */}
+        <div className="mb-6">
+          <input
+            type="text"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            placeholder="Search electronic part..."
+            className="
+              w-full
+              bg-black/40
+              border border-cyan-500/20
+              rounded-xl
+              px-4
+              py-3
+              text-cyan-100
+              placeholder:text-cyan-500/50
+              focus:outline-none
+              focus:border-cyan-400/60
+              transition
+            "
+          />
+        </div>
+
         {/* MAIN LAYOUT */}
         <div className="flex gap-6">
 
@@ -214,20 +243,26 @@ export default function InstructionsPanel() {
           <div className="flex-1 grid grid-cols-3 gap-4">
             {loadingElements ? (
               <p>Loading...</p>
+            ) : filteredElements.length === 0 ? (
+              <div className="col-span-3 text-center py-8 text-cyan-500">
+                No electronic parts found.
+              </div>
             ) : (
-              elements.map((el, i) => (
+              filteredElements.map((el, i) => (
                 <div
                   key={el.id}
                   onClick={() => setSelectedElement(el)}
                   className={`cursor-pointer border rounded-xl p-5 bg-black/40 transition
-                    ${selectedElement?.id === el.id
-                      ? "border-cyan-400 shadow-[0_0_25px_rgba(34,211,238,0.25)]"
-                      : "border-cyan-500/20 hover:border-cyan-400/40"
+                    ${
+                      selectedElement?.id === el.id
+                        ? "border-cyan-400 shadow-[0_0_25px_rgba(34,211,238,0.25)]"
+                        : "border-cyan-500/20 hover:border-cyan-400/40"
                     }`}
                 >
-                  <p className="text-xs text-cyan-500">{i + 1}</p>
+                  <p className="text-xs text-cyan-500">
+                    {elements.findIndex((item) => item.id === el.id) + 1}
+                  </p>
                   <p className="text-cyan-100">{el.name}</p>
-
                 </div>
               ))
             )}

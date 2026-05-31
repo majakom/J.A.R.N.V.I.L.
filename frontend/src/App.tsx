@@ -7,6 +7,8 @@ import ElementDatabase from "./pages/ElementDatabasePage";
 import InstructionDatabase from "./pages/InstructionDatabasePage";
 import SelectDatabase from "./pages/SelectDatabasePage";
 import ShowStep from "./pages/ShowStep";
+import EditInstruction from "./pages/EditInstructionPage";
+import CreateInstruction from "./pages/CreateInstructionPage";
 
 const PrivateRoute = ({ children }: { children: JSX.Element }) => {
   const token = localStorage.getItem("token");
@@ -71,6 +73,22 @@ export default function App() {
           element={
             <PrivateRoute>
               <ShowStep />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit_instruction/:id"
+          element={
+            <PrivateRoute>
+              <EditInstruction />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/create_instruction"
+          element={
+            <PrivateRoute>
+              <CreateInstruction />
             </PrivateRoute>
           }
         />

@@ -95,6 +95,19 @@ export const getPreviousStep = (
 export const getCurrentStep = (id: number) =>
   api<Step>(`/api/instructions/${id}/current_step/`);
 
+export const updateCurrentStep = (
+    id: number,
+    current_step_id: number,
+) =>
+    api<void>(
+        `/api/instructions/${id}`,
+        {
+            method: "PUT",
+            body: JSON.stringify({ current_step_id }),
+        }
+    );
+
+
 export const showStep = (stepId: number) =>
     api<void>(`/api/steps/${stepId}/show`, {
         method: "POST",

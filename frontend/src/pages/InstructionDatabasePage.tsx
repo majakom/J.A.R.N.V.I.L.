@@ -3,6 +3,7 @@ import {
   getInstructions,
   updateInstruction,
   deleteInstruction,
+  createInstruction,
 } from "../api/instructions/route";
 
 import { useNavigate } from "react-router-dom";
@@ -24,6 +25,7 @@ export default function InstructionsPanel() {
 
   const [instructionEditValue, setInstructionEditValue] =
     useState("");
+  const [searchTerm, setSearchTerm] = useState("");
 
   const navigate = useNavigate();
 
@@ -65,6 +67,11 @@ export default function InstructionsPanel() {
       console.error(err);
     }
   };
+
+  //SEARCH BAR
+  const filteredInstructions = instructions.filter((instruction) =>
+    instruction.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   // =========================
   // UPDATE
@@ -123,8 +130,12 @@ export default function InstructionsPanel() {
             >
               ← CONTROL PANEL
             </button>
+            
           </div>
-          <div className="border-l-2 border-violet-500 pl-4 mb-10">
+          <div className="flex justify-between items-center gap-8 mb-10">
+
+          {/* TITLE */}
+          <div className="border-l-2 border-violet-500 pl-4">
             <h2 className="text-2xl tracking-[0.3em] text-violet-100">
               INSTRUCTIONS
             </h2>
@@ -133,6 +144,52 @@ export default function InstructionsPanel() {
               CONTROL PANEL
             </p>
           </div>
+
+      
+          <div>
+            <button
+              onClick={() => navigate(`/create_instruction`)}
+              className="
+                mt-2
+                w-fit
+                px-4 py-2
+                rounded-lg
+                border border-violet-400/40
+                bg-violet-500/10
+                text-violet-700
+                hover:bg-violet-500/20
+                hover:border-violet-300
+                transition
+                shadow-[0_0_20px_rgba(139,92,246,0.15)]
+              "
+            >
+              + CREATE NEW INSTRUCTION
+            </button>
+          </div>
+
+        </div>
+          <div className="mb-6">
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="Search instruction..."
+              className="
+                w-full
+                bg-black/40
+                border border-violet-500/20
+                rounded-xl
+                px-4
+                py-3
+                text-violet-100
+                placeholder:text-violet-500/50
+                focus:outline-none
+                focus:border-violet-400/60
+                transition
+              "
+            />
+          </div>
+           
 
           {loadingInstructions ? (
             <p className="text-violet-400">
@@ -143,42 +200,46 @@ export default function InstructionsPanel() {
 
               {/* LEFT GRID */}
               <div className="flex-1 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-
-                {instructions.map((ins, index) => (
-                  <div
-                    key={ins.id}
-                    onClick={() => setSelectedInstruction(ins)}
-                    className={`
-                      cursor-pointer
-                      border
-                      border-violet-500/20
-                      bg-black/40
-                      p-5
-                      rounded-xl
-                      backdrop-blur-md
-                      hover:border-violet-400/40
-                      transition
-                      duration-300
-                      hover:shadow-[0_0_30px_rgba(139,92,246,0.12)]
-
-                      ${
-                        selectedInstruction?.id === ins.id
-                          ? "border-violet-400"
-                          : ""
-                      }
-                    `}
-                  >
-
-                    <p className="text-xs text-violet-500 tracking-widest">
-                      {String(index + 1).padStart(2, "0")}
-                    </p>
-
-                    <p className="text-lg text-violet-100 mt-3 tracking-wide">
-                      {ins.name}
-                    </p>
-
+                {filteredInstructions.length === 0 ? (
+                  <div className="col-span-full text-center py-10 text-violet-500">
+                    No instructions found.
                   </div>
-                ))}
+                ) : (
+                  filteredInstructions.map((ins, index) => (
+                    <div
+                      key={ins.id}
+                      onClick={() => setSelectedInstruction(ins)}
+                      className={`
+                        cursor-pointer
+                        border
+                        border-violet-500/20
+                        bg-black/40
+                        p-5
+                        rounded-xl
+                        backdrop-blur-md
+                        hover:border-violet-400/40
+                        transition
+                        duration-300
+                        hover:shadow-[0_0_30px_rgba(139,92,246,0.12)]
+
+                        ${
+                          selectedInstruction?.id === ins.id
+                            ? "border-violet-400"
+                            : ""
+                        }
+                      `}
+                    >
+                      <p className="text-xs text-violet-500 tracking-widest">
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
+
+                      <p className="text-lg text-violet-100 mt-3 tracking-wide">
+                        {ins.name}
+                      </p>
+                    </div>
+                  ))
+                )}
+
               </div>
 
               {/* SEPARATOR */}
@@ -296,15 +357,11 @@ export default function InstructionsPanel() {
                       <div className="flex items-center justify-center gap-4 mt-2">
 
                         <button
-                          onClick={() => {
-                            setEditingInstructionId(
-                              selectedInstruction.id
-                            );
-
-                            setInstructionEditValue(
-                              selectedInstruction.name
-                            );
-                          }}
+                           onClick={() => {
+                              setEditingInstructionId(selectedInstruction.id);
+                              setInstructionEditValue(selectedInstruction.name);
+                              navigate(`/edit_instruction/${selectedInstruction.id}`);
+                            }}
                           className="
                             text-violet-300
                             px-3

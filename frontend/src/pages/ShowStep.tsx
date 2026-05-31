@@ -7,6 +7,7 @@ import {
   getNextStep,
   getPreviousStep,
   getCurrentStep,
+  updateCurrentStep,
 } from "../api/steps/route";
 
 import { setElementShow } from "../api/elements/route";
@@ -203,7 +204,9 @@ export default function Dashboard() {
             {steps.map((step) => (
               <div
                 key={step.id}
-                onClick={() => setActiveStep(step)}
+                onClick={() => {setActiveStep(step);
+                                updateCurrentStep(selectedInstruction!.id, step.id);}
+                }
                 className={`cursor-pointer border p-3 rounded-md transition ${
                   activeStep?.id === step.id
                     ? "border-violet-400 bg-violet-500/10"

@@ -31,6 +31,7 @@ export default function Dashboard() {
   const [showDraftModal, setShowDraftModal] = useState(false);
   const [generatedDraft, setGeneratedDraft] = useState<FirstDraftStep[]>([]);
   const [instructionName, setInstructionName] = useState<string>("");
+  const [isGenerating, setIsGenerating] = useState(false);
 
   // =========================
   // NAVIGATION
@@ -268,23 +269,41 @@ export default function Dashboard() {
 
             <button
               onClick={async () => {
-                if (!instructionText.trim()) return;
+                if (!instructionText.trim() || isGenerating) return;
+
+                setIsGenerating(true);
 
                 try {
                   const draft: FirstDraftInstruction =
-                  await createInstructionWithGenerated({
-                    concept: instructionText,
-                  });
+                    await createInstructionWithGenerated({
+                      concept: instructionText,
+                    });
+
                   setInstructionName(draft.name);
                   setGeneratedDraft(draft.steps);
                   setShowDraftModal(true);
                 } catch (err) {
                   console.error(err);
+                } finally {
+                  setIsGenerating(false);
                 }
               }}
-              className="px-4 py-1.5 bg-black/70 border border-violet-900/40 text-violet-300 text-xs tracking-[0.5em] rounded-md hover:bg-black hover:border-violet-500/40 transition"
+              disabled={isGenerating}
+              className={`px-4 py-1.5 text-xs tracking-[0.5em] rounded-md border transition flex items-center gap-2
+                ${
+                  isGenerating
+                    ? "bg-black/60 border-violet-500/40 text-violet-400 cursor-not-allowed"
+                    : "bg-black/70 border-violet-900/40 text-violet-300 hover:bg-black hover:border-violet-500/40"
+                }`}
             >
-              GENERATE INSTRUCTION
+              {isGenerating ? (
+                <>
+                  <span className="w-3 h-3 border-2 border-violet-400 border-t-transparent rounded-full animate-spin" />
+                  GENERATING...
+                </>
+              ) : (
+                "GENERATE INSTRUCTION"
+              )}
             </button>
           </div>
 
@@ -356,9 +375,9 @@ export default function Dashboard() {
                   {stepData?.description || "No step data available"}
                 </p>
 
-                <div className="mt-3">
-                  <p className="text-sm text-violet-100 leading-relaxed tracking-[0.1em]">
-                    Parts
+                {stepData?.part_ids.length != 0 && <div className="mt-3">
+                  <p className="text-sm text-violet-500 leading-relaxed tracking-[0.1em]">
+                    Parts:
                   </p>
 
                   {stepData?.part_ids?.map((id) => {
@@ -368,15 +387,11 @@ export default function Dashboard() {
 
                       return (
                         <div key={id} className="text-sm">
-                          <p className="text-violet-200">ID: {el.id}</p>
                           <p className="text-violet-200">{el.name}</p>
-                          <p className="text-xs text-violet-500">
-                            amount: {el.amount}
-                          </p>
                         </div>
                       );
                     })}
-                </div>
+                </div>}
               </>
             )}
           </div>
@@ -442,11 +457,13 @@ export default function Dashboard() {
                       {step.description}
                     </p>
 
-                    <div className="mt-3">
-                      <p className="text-violet-500 text-xs uppercase mb-2">
-                        Parts
-                      </p>
-
+                    {step?.part_ids?.length > 0 && (
+                      <div className="mt-3">
+                        <p className="text-violet-500 text-xs uppercase mb-2">
+                          Parts
+                        </p>
+                      </div>
+                    )}
                       <div className="flex flex-wrap gap-2">
                         
                         {step.part_ids.map((partId) => (
@@ -459,7 +476,6 @@ export default function Dashboard() {
                         ))}
                       </div>
                     </div>
-                  </div>
                 ))}
             </div>
 
