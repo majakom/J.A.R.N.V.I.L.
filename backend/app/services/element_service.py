@@ -1,3 +1,4 @@
+from core.vision_state import vision_state
 from utils.math_utils import cosine_similarity
 from repositories.yolo_class_repository import YoloClassRepository
 from services.embedding_service import get_embedding_service
@@ -57,8 +58,10 @@ class ElementService:
         print(f"Best match for element {element_id}: class {best_class.id} - {best_class.name} (score: {best_score:.4f})")
 
         if show:
-            print(f"Showing element {best_class.name} - TODO")
-            return best_class.name
+            vision_state.active_class_names.add(best_class.name)
         else:
-            print(f"Hiding element {best_class.name} - TODO")
-            return best_class.name
+            vision_state.active_class_names.discard(best_class.name)
+
+        vision_state.enabled = len(vision_state.active_class_names) > 0
+
+        return best_class.name
