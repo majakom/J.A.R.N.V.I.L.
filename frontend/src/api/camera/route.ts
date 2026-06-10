@@ -3,4 +3,4 @@ import type { Camera } from "../../types/camera";
 
 
 export const getCamera = () =>
-    api<Camera[]>("/api/camera/");
+    api<Camera[]>("/api/camera/status");

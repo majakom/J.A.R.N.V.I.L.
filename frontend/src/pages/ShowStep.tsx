@@ -12,7 +12,7 @@ import {
 
 import { setElementShow } from "../api/elements/route";
 import { getElements } from "../api/elements/route";
-
+import { useYoloStream } from "../api/yolo_stream/route";
 import type { Instruction } from "../types/instruction";
 import type { Step } from "../types/step";
 import type { Element } from "../types/element";
@@ -26,7 +26,7 @@ export default function Dashboard() {
   // =========================
   const [instructions, setInstructions] = useState<Instruction[]>([]);
   const [loadingInstructions, setLoadingInstructions] = useState(true);
-
+  const streamUrl = useYoloStream();
   const [selectedInstruction, setSelectedInstruction] =
     useState<Instruction | null>(null);
 
@@ -228,7 +228,7 @@ export default function Dashboard() {
       {/* ========================= */}
       {/* MAIN PANEL (RESTORED UI) */}
       {/* ========================= */}
-      <div className="flex-1 flex items-center justify-center">
+      <div className="flex-1 flex items-center justify-center pt-12 pb-20">
 
         <div className="
           relative w-full max-w-2xl p-[1px] rounded-xl
@@ -340,7 +340,28 @@ export default function Dashboard() {
             </div>
 
           </div>
+
+          {/* === YOLO LIVE STREAM BOX === */}
+          <div className="md:col-span-2 border border-violet-500/40 bg-black/70 p-4 rounded-xl backdrop-blur-md ">
+
+            <p className="text-violet-400 text-[10px] mb-3 uppercase tracking-[0.35em]">
+              Live Camera Feed (YOLO)
+            </p>
+
+            <div className="relative w-full border border-violet-900/50 rounded overflow-hidden bg-black flex items-center justify-center">
+              
+              <img
+                src={streamUrl}
+                alt="YOLO Stream"
+                className="max-w-full h-auto object-contain"
+              />
+
+            </div>
+
+          </div>
+          
         </div>
+        
       </div>
     </div>
   );
